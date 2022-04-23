@@ -7,7 +7,9 @@ import {
   Configure,
   DynamicWidgets,
   RefinementList,
+  ToggleRefinement,
   Pagination,
+  Panel,
 } from 'react-instantsearch-dom';
 import PropTypes from 'prop-types';
 import './App.css';
@@ -44,6 +46,22 @@ function App() {
                   placeholder: '',
                 }}
               />
+              <Panel header="Visibility">
+                <ToggleRefinement
+                  attribute="public"
+                  label="Public"
+                  value={true}
+                  defaultRefinement={true}
+                />
+              </Panel>
+
+              <Panel header="Licenses">
+                <RefinementList attribute="license" />
+              </Panel>
+
+              <Panel header="Tags">
+                <RefinementList attribute="tags" />
+              </Panel>
               <Hits hitComponent={Hit} />
 
               <div className="pagination">
