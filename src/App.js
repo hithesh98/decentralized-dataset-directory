@@ -18,8 +18,11 @@ import { CHAIN_NAMESPACES, CustomChainConfig, ADAPTER_EVENTS } from "@web3auth/b
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
 import Homepage from './Homepage';
 import Datapage from './Data';
-import { GeistProvider, CssBaseline, Button } from '@geist-ui/core' 
+import { GeistProvider, CssBaseline, Button, Grid } from '@geist-ui/core' 
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { ethers } from "ethers";
+import detectEthereumProvider from '@metamask/detect-provider'
+
 
 const searchClient = algoliasearch(
   '5JP0CIZK3A',
@@ -52,14 +55,17 @@ const web3auth = new Web3Auth({
 
 
 function App() {
+  const [data, setdata] = useState({
+    address: "",
+    Balance: null,
+  });
+
+  const [authenticated, setAuthenticated] = useState(false);
+
+
   function subscribeAuthEvents(web3auth) {
     web3auth.on(ADAPTER_EVENTS.CONNECTED, (data) => {
       console.log("Yeah!, you are successfully logged in", data);
-
-      const timer = setTimeout(async () => {
-        await web3auth.logout();
-      }, 30000);
-    
     });
   
     web3auth.on(ADAPTER_EVENTS.CONNECTING, () => {
@@ -68,6 +74,8 @@ function App() {
   
     web3auth.on(ADAPTER_EVENTS.DISCONNECTED, () => {
       console.log("disconnected");
+      let a = detectEthereumProvider().then((input) => console.log(input))
+  
     });
   
     web3auth.on(ADAPTER_EVENTS.ERRORED, (error) => {
@@ -93,23 +101,41 @@ function App() {
   const logout = async () => {
     console.log("logging out")
     await web3auth.logout();
+    let a = await detectEthereumProvider() 
+    console.log(a)
   }
 
+  const login = async () => {
+    console.log("logging out")
+    openProvider().then(() => getLoginStatus().then((input) => setAuthenticated(input)));
+  }
+
+  const getLoginStatus = async () => {
+    let a = await detectEthereumProvider() 
+    return a;
+  }
 
   subscribeAuthEvents(web3auth);
-  let initiatedWallet = initWallet().then(() => openProvider())
+
+  useEffect(() => {
+    let initiatedWallet = initWallet().then(() => getLoginStatus().then((input) => setAuthenticated(input)))
+  }, [])
 
   return (
     <>
 
   <GeistProvider>
     <CssBaseline />
-    <header className="header">
-        <h1 className="header-title">
+    <div className="header">
+      <div style={{display: "flex"}}>
+      <h1 className="header-title">
           <a href="/">IPFS Datasets</a>
-        </h1>
-        <Button onClick={logout} auto type="secondary">Logout</Button>
-      </header>
+      </h1>
+      </div>
+        <div style={{padding: "0 30px;", display: "flex"}}>
+          {authenticated? <div><Button auto type="primary" style={{marginRight: 5}}>Connected</Button><Button auto type="secondary" auto onClick={() => setVisible(true)}>Pin Metadata</Button></div>:<Button onClick={login} auto type="secondary">Connect wallet</Button>}
+        </div>
+      </div>
       <HashRouter>
       <Switch>
         <Route exact path="/login">
