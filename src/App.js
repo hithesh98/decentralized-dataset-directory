@@ -16,11 +16,19 @@ import './App.css';
 import { Web3Auth } from "@web3auth/web3auth";
 import { CHAIN_NAMESPACES, CustomChainConfig, ADAPTER_EVENTS } from "@web3auth/base";
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
+import Homepage from './Homepage';
+import Datapage from './Data';
+
+import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 const searchClient = algoliasearch(
   '5JP0CIZK3A',
   '878d4c6fc08b0b0a88ff59908e1bd020'
 );
+
+const loading = (
+<p>loading...</p>
+)
 
 
 const ethChainConfig = {
@@ -89,75 +97,31 @@ function App() {
 
 
   subscribeAuthEvents(web3auth);
-  initWallet().then(() => openProvider())
+  let initiatedWallet = initWallet().then(() => openProvider())
 
   return (
-    <div>
-      <header className="header">
+    <>
+          <header className="header">
         <h1 className="header-title">
           <a href="/">IPFS Datasets</a>
         </h1>
         <button onClick={logout}>Log out</button>
       </header>
+      <HashRouter>
+      <Switch>
+        <Route exact path="/login">
+          <Redirect to="/" />
+        </Route>
+        <Route path="/data" name="Data" render={props => <Datapage {...props} searchClient={searchClient} logout={logout}/>} />
+        <Route path="/" name="Home" render={props => <Homepage {...props} searchClient={searchClient} logout={logout}/>} />
+      </Switch>
 
-      <div className="container">
-        <InstantSearch searchClient={searchClient} indexName="ai_datasets">
-          <div className="search-panel">
-            <div className="search-panel__filters">
-              <Configure facets={['*']} maxValuesPerFacet={20} />
-              <DynamicWidgets fallbackWidget={RefinementList}></DynamicWidgets>
-            </div>
+  </HashRouter>
 
-             <div className="search-panel__results">
-              <h1 className="search-title">
-                Curated list of datasets for data scientists
-              </h1>
-              <SearchBox
-                className="searchbox"
-                translations={{
-                  placeholder: '',
-                }}
-              />
-              <Panel header="Visibility">
-                <ToggleRefinement
-                  attribute="public"
-                  label="Public"
-                  value={true}
-                  defaultRefinement={true}
-                />
-              </Panel>
+    </>
 
-              <Panel header="Licenses">
-                <RefinementList attribute="license" />
-              </Panel>
-
-              <Panel header="Tags">
-                <RefinementList attribute="tags" />
-              </Panel>
-              <Hits hitComponent={Hit} />
-
-              <div className="pagination">
-                <Pagination />
-              </div>
-            </div>
-          </div>
-        </InstantSearch>
-      </div>
-    </div>
   );
 }
 
-function Hit(props) {
-  return (
-    <article className="hit">
-      <h2>{props.hit.name}</h2>
-      <p>{JSON.stringify(props.hit.description).slice(0, 200)}</p>
-    </article>
-  );
-}
-
-Hit.propTypes = {
-  hit: PropTypes.object.isRequired,
-};
 
 export default App;
