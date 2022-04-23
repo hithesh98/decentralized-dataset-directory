@@ -13,6 +13,10 @@ em {
   margin-bottom: 1rem;
 }
 
+.w3a-adapter-item:before {
+  content: "" !important;
+}
+
 .header a {
   color: #fff;
   text-decoration: none;

@@ -18,7 +18,7 @@ import { CHAIN_NAMESPACES, CustomChainConfig, ADAPTER_EVENTS } from "@web3auth/b
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
 import Homepage from './Homepage';
 import Datapage from './Data';
-
+import { GeistProvider, CssBaseline, Button } from '@geist-ui/core' 
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 const searchClient = algoliasearch(
@@ -101,22 +101,26 @@ function App() {
 
   return (
     <>
-          <header className="header">
+
+  <GeistProvider>
+    <CssBaseline />
+    <header className="header">
         <h1 className="header-title">
           <a href="/">IPFS Datasets</a>
         </h1>
-        <button onClick={logout}>Log out</button>
+        <Button onClick={logout} auto type="secondary">Logout</Button>
       </header>
       <HashRouter>
       <Switch>
         <Route exact path="/login">
           <Redirect to="/" />
         </Route>
-        <Route path="/data" name="Data" render={props => <Datapage {...props} searchClient={searchClient} logout={logout}/>} />
+        <Route path="/id/:hash" name="Data" render={props => <Datapage {...props} searchClient={searchClient} logout={logout}/>} />
         <Route path="/" name="Home" render={props => <Homepage {...props} searchClient={searchClient} logout={logout}/>} />
       </Switch>
 
-  </HashRouter>
+      </HashRouter> 
+   </GeistProvider>
 
     </>
 

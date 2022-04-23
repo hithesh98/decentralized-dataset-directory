@@ -9,6 +9,7 @@
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
+    "@geist-ui/core": "^2.3.8",
     "@web3auth/base": "^0.9.3",
     "@web3auth/web3auth": "^0.9.3",
     "algoliasearch": "4",
