@@ -26,7 +26,11 @@ em {
 .w3a-adapter-item:before {
   content: "" !important;
 }
-
+.ais-Hits-item{
+  padding: 0px!important;
+  box-shadow: unset!important;
+  border: unset!important;
+}
 .header a {
   color: #fff;
   text-decoration: none;

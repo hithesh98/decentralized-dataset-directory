@@ -15,7 +15,14 @@ function Hit(props){
         <Card width="100%" type="dark">
         <Text h4 my={0}>{props.hit.title || "Untitled"}</Text>
         <Text>
-
+            {
+                Object.entries(props.hit).filter(([key, value]) => !key.startsWith("_")).map(([key,value])=>{
+                    return (
+                        <div>{key} : {value.toString()}</div>
+                    );
+                  })
+                  
+            }
         </Text>
         <Card.Footer>
           <Link target="_blank" href="https://github.com/geist-org/geist-ui">See NFT on Ethscan.</Link>
@@ -32,16 +39,14 @@ function Data(props){
       );
       
     return (<>
-      <div className="ais-InstantSearch">
-        <h1>React InstantSearch </h1>
+      <div className="ais-InstantSearch" style={{padding: "30px 30px 30px 60px"}}>
+        <h1>Known IPFS Datasets</h1>
         <InstantSearch indexName="ethams_demo" searchClient={searchClient}>
           <div className="right-panel">
             <SearchBox />
-            <Grid.Container gap={1.5}>
-            <Grid>
+            <br></br>
+
             <Hits hitComponent={Hit} />
-            </Grid>
-            </Grid.Container>
           </div>
         </InstantSearch>
       </div>
