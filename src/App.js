@@ -61,7 +61,8 @@ function App() {
   });
 
   const [authenticated, setAuthenticated] = useState(false);
-
+  const [visible, setVisible] = useState(false);
+  
 
   function subscribeAuthEvents(web3auth) {
     web3auth.on(ADAPTER_EVENTS.CONNECTED, (data) => {
