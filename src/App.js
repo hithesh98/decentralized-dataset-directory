@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import algoliasearch from 'algoliasearch/lite';
+import algoliasearch from 'algoliasearch';
 import {
   InstantSearch,
   Hits,
@@ -18,11 +18,11 @@ import { CHAIN_NAMESPACES, CustomChainConfig, ADAPTER_EVENTS } from "@web3auth/b
 import { LOGIN_MODAL_EVENTS } from "@web3auth/ui";
 import Homepage from './Homepage';
 import Datapage from './Data';
-import { GeistProvider, CssBaseline, Button, Grid } from '@geist-ui/core' 
+import { GeistProvider, CssBaseline, Button, Grid, Modal, Input, Spacer, Textarea, Note } from '@geist-ui/core' 
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { ethers } from "ethers";
 import detectEthereumProvider from '@metamask/detect-provider'
-
+import PlayFill from '@geist-ui/icons/playFill'
 
 const searchClient = algoliasearch(
   '5JP0CIZK3A',
@@ -59,8 +59,21 @@ function App() {
     address: "",
     Balance: null,
   });
-
   const [authenticated, setAuthenticated] = useState(false);
+  const [state, setState] = useState(false)
+  const handler = () => setState(true)
+  const closeHandler = (event) => {
+    setState(false)
+    console.log('closed')
+  }
+
+  const [cid, setCid] = useState(null)
+  const [jsonData, setJsonData] = useState(null)
+  const [modalNote, setModalNote] = useState({
+    hidden: true,
+    status: "success",
+    description: "description"
+  })
 
 
   function subscribeAuthEvents(web3auth) {
@@ -121,6 +134,21 @@ function App() {
     let initiatedWallet = initWallet().then(() => getLoginStatus().then((input) => setAuthenticated(input)))
   }, [])
 
+  const executeBridge = () => {
+    console.log(jsonData)
+    const data = JSON.parse(jsonData)
+    const indexed = {
+      ...data,
+      cid: cid 
+    }
+
+    const index = searchClient.initIndex('ethams_demo')
+    index.saveObjects(indexed, {
+      autoGenerateObjectIDIfNotExist: true
+    })
+  
+  }
+
   return (
     <>
 
@@ -133,11 +161,32 @@ function App() {
       </h1>
       </div>
         <div style={{padding: "0 30px;", display: "flex"}}>
-          {authenticated? <div><Button auto type="primary" style={{marginRight: 5}}>Connected</Button><Button auto type="secondary" auto onClick={() => setVisible(true)}>Pin Metadata</Button></div>:<Button onClick={login} auto type="secondary">Connect wallet</Button>}
+          {authenticated? <><div><Button auto type="primary" style={{marginRight: 5}}>Connected</Button><Button auto type="secondary" auto onClick={handler}>Pin Metadata</Button></div></>:<Button onClick={login} auto type="secondary">Connect wallet</Button>}
         </div>
       </div>
+      <Modal visible={state} onClose={closeHandler}>
+        <Modal.Title>Bridge IPFS Data with Metadata</Modal.Title>
+        <Modal.Subtitle></Modal.Subtitle>
+        <Modal.Content>
+          <p>Paste your IPFS Hash (CID) below, then add some metadata about the file contents.</p>
+
+        </Modal.Content>
+        <Input scale={2/3} placeholder="IPFS Hash (CID) like ipfs://Qj4..." width="100%" onChange={(e) => setCid(e.target.value)}/> <Spacer h={.5} />
+
+        <Textarea style={{height:"80px"}} placeholder="Paste your JSON metadata here" onChange={(e) => setJsonData(e.target.value)} />
+        <Spacer></Spacer>
+
+        <Button icon={<PlayFill />} scale={2/3} type="secondary">Validate JSON</Button>
+        {modalNote.hidden? "": <br></br>}
+  <Note hidden={modalNote.hidden} type="success" label={modalNote.status} filled>{modalNote.description}</Note>
+
+        <Modal.Action passive onClick={() => setState(false)}>Cancel</Modal.Action>
+        <Modal.Action onClick={executeBridge}>Execute</Modal.Action>
+      </Modal>
       <HashRouter>
       <Switch>
+
+      
         <Route exact path="/login">
           <Redirect to="/" />
         </Route>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@geist-ui/core": "^2.3.8",
+    "@geist-ui/icons": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
     "@web3auth/base": "^0.9.3",
     "@web3auth/web3auth": "^0.9.3",
