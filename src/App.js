@@ -222,7 +222,7 @@ function App() {
           <Redirect to="/" />
         </Route>
         <Route path="/id/:hash" name="Data" render={props => <Datapage {...props} searchClient={searchClient} logout={logout}/>} />
-        <Route path="/" name="Home" render={props => <Homepage {...props} searchClient={searchClient} logout={logout}/>} />
+        <Route path="/" name="Home" render={props => <Datapage {...props} searchClient={searchClient} logout={logout}/>} />
       </Switch>
 
       </HashRouter> 

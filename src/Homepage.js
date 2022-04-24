@@ -22,7 +22,7 @@ function Homepage(props){
 
 
       <div className="container">
-        <InstantSearch searchClient={props.searchClient} indexName="ai_datasets">
+        <InstantSearch searchClient={props.searchClient} indexName="ethams_demo">
           <div className="search-panel">
             <div className="search-panel__filters">
               <Configure facets={['*']} maxValuesPerFacet={20} />
@@ -31,7 +31,7 @@ function Homepage(props){
 
              <div className="search-panel__results">
               <h1 className="search-title">
-                Curated list of datasets for data scientists
+                Curated list of datasets for data scientists and others
               </h1>
               <SearchBox
                 className="searchbox"
