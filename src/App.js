@@ -10,6 +10,7 @@ import {
   ToggleRefinement,
   Pagination,
   Panel,
+  Index,
 } from 'react-instantsearch-dom';
 import PropTypes from 'prop-types';
 import './App.css';
@@ -25,8 +26,8 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import PlayFill from '@geist-ui/icons/playFill'
 
 const searchClient = algoliasearch(
-  '5JP0CIZK3A',
-  '878d4c6fc08b0b0a88ff59908e1bd020'
+  '259LC4EB80',
+  'bb760050b204bd155fba3360dba371bd'
 );
 
 const loading = (
@@ -137,17 +138,47 @@ function App() {
   const executeBridge = () => {
     console.log(jsonData)
     const data = JSON.parse(jsonData)
-    const indexed = {
+    const indexed = [{
       ...data,
       cid: cid 
-    }
-
+    }]
+    console.log(indexed)
+    //upload algolia
     const index = searchClient.initIndex('ethams_demo')
-    index.saveObjects(indexed, {
+    let result = index.saveObjects(indexed, {
       autoGenerateObjectIDIfNotExist: true
-    })
-  
-  }
+    }).then(i => console.log(i))
+    
+
+    fetch('http://localhost:5000/upload', {
+      method: 'POST',
+      body: JSON.stringify(indexed)
+    }).then(response=>response.json())
+    .then(data=>{ 
+      fetch('https://api-eu1.tatum.io/v3/nft/mint', {
+        method: 'POST',
+        headers: {
+          "x-api-key": "c0ac4dce-a2ef-4c8b-a601-0bb058028e10",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "chain": "ETH",
+          "to": "0x20cF6F904526Df3dC458B621D0734fafef1928aF",
+          "url": data.ipfsHash,
+          "feeCurrency": "ETH"
+       
+        })
+      }).then(response=>response.json()).then(data=>{
+        setModalNote({hidden: false,
+          status: "success",
+          description: `Minted NFT, your txid is ${data.txId}`
+        }
+      )
+        
+      }); })
+    
+    
+      }
 
   return (
     <>
