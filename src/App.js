@@ -145,9 +145,6 @@ function App() {
     console.log(indexed)
     //upload algolia
     const index = searchClient.initIndex('ethams_demo')
-    let result = index.saveObjects(indexed, {
-      autoGenerateObjectIDIfNotExist: true
-    }).then(i => console.log(i))
     
 
     fetch('http://localhost:5000/upload', {
@@ -174,6 +171,16 @@ function App() {
           description: `Minted NFT, your txid is ${data.txId}`
         }
       )
+      const temp = indexed[0]
+      const indexed2 = [{
+        ...temp,
+        txId: data.txId 
+      }]
+  
+      let result = index.saveObjects(indexed2, {
+        autoGenerateObjectIDIfNotExist: true
+      }).then(i => console.log(i))
+  
         
       }); })
     

@@ -36,6 +36,10 @@ em {
   text-decoration: none;
 }
 
+.div{
+  word-break: break-all;
+}
+
 .header-title {
   font-size: 1.2rem;
   font-weight: normal;

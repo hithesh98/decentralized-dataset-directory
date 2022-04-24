@@ -25,7 +25,7 @@ function Hit(props){
             }
         </Text>
         <Card.Footer>
-          <Link target="_blank" href="https://github.com/geist-org/geist-ui">See NFT on Ethscan.</Link>
+          {props.hit.txId ? <Link target="_blank" href={"https://ropsten.etherscan.io/tx/" + props.hit.txId}>See NFT on Ethscan.</Link>: <Link target="_blank" href="https://ropsten.etherscan.io/tx/">See NFT on Ethscan.</Link>}
         </Card.Footer>
       </Card>
   
