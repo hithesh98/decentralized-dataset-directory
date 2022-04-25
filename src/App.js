@@ -37,12 +37,12 @@ const loading = (
 
 const ethChainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x3",
-    rpcTarget: `https://eth-ropsten.alchemyapi.io/v2/-Yy8rh82I58laI0uyHmi3-1yPSX2Qj8-`,
-    displayName: "ropsten",
-    blockExplorer: "https://ropsten.etherscan.io/",
-    ticker: "ETH",
-    tickerName: "Ethereum",
+    chainId: "0x38",
+    rpcTarget: `https://bsc-dataseed.binance.org/`,
+    displayName: "BNB Smart Chain Testnet",
+    blockExplorer: "https://testnet.bscscan.com/",
+    ticker: "BSC",
+    tickerName: "Binance smart something",
 };
 // We are initializing with EIP155 namespace which
 // will initialize the modal with ethereum mainnet
@@ -76,6 +76,9 @@ function App() {
     description: "description"
   })
 
+  const detectWeb3Auth = () => {
+    return web3auth.provider
+  }
 
   function subscribeAuthEvents(web3auth) {
     web3auth.on(ADAPTER_EVENTS.CONNECTED, (data) => {
@@ -88,7 +91,7 @@ function App() {
   
     web3auth.on(ADAPTER_EVENTS.DISCONNECTED, () => {
       console.log("disconnected");
-      let a = detectEthereumProvider().then((input) => console.log(input))
+      let a = detectWeb3Auth().then((input) => setAuthenticated(input))
   
     });
   
@@ -115,7 +118,7 @@ function App() {
   const logout = async () => {
     console.log("logging out")
     await web3auth.logout();
-    let a = await detectEthereumProvider() 
+    let a = detectWeb3Auth() 
     console.log(a)
   }
 
@@ -125,7 +128,7 @@ function App() {
   }
 
   const getLoginStatus = async () => {
-    let a = await detectEthereumProvider() 
+    let a = detectWeb3Auth() 
     return a;
   }
 
@@ -155,14 +158,14 @@ function App() {
       fetch('https://api-eu1.tatum.io/v3/nft/mint', {
         method: 'POST',
         headers: {
-          "x-api-key": "c0ac4dce-a2ef-4c8b-a601-0bb058028e10",
+          "x-api-key": "b8ad1e1c-ba3f-45b7-8b12-1a74f68e9dd6",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          "chain": "ETH",
+          "chain": "BSC",
           "to": "0x20cF6F904526Df3dC458B621D0734fafef1928aF",
           "url": data.ipfsHash,
-          "feeCurrency": "ETH"
+          "feeCurrency": "BSC"
        
         })
       }).then(response=>response.json()).then(data=>{
